@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -670,8 +671,12 @@ https://github.com/nodeca/pako/blob/main/LICENSE
     }
 
     function extractTeamLeader(team1) {
-      const match = displayValue(team1).match(/Team Name:\s*([^\)\r\n]+)\)/i);
-      return match ? match[1].trim() : "";
+      const line = displayValue(team1).split(/\r?\n/).find(value => /Team Name:/i.test(value));
+      if (!line) return "";
+      const marker = line.search(/Team Name:/i);
+      const value = line.slice(marker).replace(/^Team Name:\s*/i, "");
+      const lastClosingParenthesis = value.lastIndexOf(")");
+      return lastClosingParenthesis >= 0 ? value.slice(0, lastClosingParenthesis).trim() : "";
     }
 
     function worksheetXml(headers, rows, targetDate) {
